@@ -8,6 +8,7 @@ class GodotRevenueCat : public Reference {
     GDCLASS(GodotRevenueCat, Reference);
 
     int instanceId;
+    bool isDebug;
 
 protected:
     static void _bind_methods();
@@ -17,8 +18,8 @@ public:
 
     // Place all methods headers here
     void init(const int godotId, const String &api_key, const bool is_debug);
-    //purchases
-    void checkSubscriptionStatus(const String &subscription_id);
+    void purchase_product(const String &product_id);
+    void check_subscription_status(const String &subscription_id);
 
 
 
