@@ -19,6 +19,7 @@ public:
     // Place all methods headers here
     void init(const int godotId, const String &api_key, const bool is_debug);
     void purchase_product(const String &product_id);
+    void restore_transactions();
     void check_subscription_status(const String &subscription_id);
 
 

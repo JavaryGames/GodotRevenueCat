@@ -66,6 +66,22 @@ void GodotRevenueCat::purchase_product(const String &product_id){
 }
 
 
+void GodotRevenueCat::restore_transactions(){
+    [[RCPurchases sharedPurchases] restoreTransactionsWithCompletionBlock:^(RCPurchaserInfo *purchaserInfo, NSError *error) {
+        if (error){
+            if (isDebug){
+                NSLog(@"Error: %@", error);
+            }
+            Object *obj = ObjectDB::get_instance(instanceId);
+            obj->call_deferred(String("revenuecat_restore_transactions_failed"), [error.localizedDescription UTF8String]);
+            return;
+        }
+        Object *obj = ObjectDB::get_instance(instanceId);
+        obj->call_deferred(String("revenuecat_restore_transactions_succeeded"));
+    }];
+} 
+
+
 void GodotRevenueCat::check_subscription_status(const String &subscription_id){
     NSString *ns_subscription_id = [NSString stringWithCString: subscription_id.utf8().get_data()];
     [[RCPurchases sharedPurchases] purchaserInfoWithCompletionBlock: ^(RCPurchaserInfo * purchaserInfo, NSError * error) {
@@ -106,6 +122,7 @@ Dictionary create_info_dict(RCEntitlementInfo *entitlement, NSString *product_id
 void GodotRevenueCat::_bind_methods() {
     ClassDB::bind_method("init", &GodotRevenueCat::init);
     ClassDB::bind_method("purchase_product", &GodotRevenueCat::purchase_product);
+    ClassDB::bind_method("restore_transactions", &GodotRevenueCat::restore_transactions);
     ClassDB::bind_method("check_subscription_status", &GodotRevenueCat::check_subscription_status);
 
 }
