@@ -1,5 +1,5 @@
 framework module Purchases {
-  umbrella header "Purchases-umbrella.h"
+  umbrella header "Purchases.h"
 
   export *
   module * { export * }
