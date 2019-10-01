@@ -42,6 +42,11 @@ void GodotRevenueCat::purchase_product(const String &product_id){
         }
         // Get SKProduct
         product = entitlements[@"subscription"].offerings[@"weekly"].activeProduct; //<--
+        if (product == nil) {
+            Object *obj = ObjectDB::get_instance(instanceId);
+            obj->call_deferred(String("revenuecat_purchase_product_failed"), [ns_product_id UTF8String], @"Subscription provider is not available at the moment.");
+            return;
+        }
         // Make purchase
         [[RCPurchases sharedPurchases] makePurchase:product withCompletionBlock:^(SKPaymentTransaction *transaction, RCPurchaserInfo *purchaserInfo, NSError *error, BOOL cancelled) {
             if (error){
