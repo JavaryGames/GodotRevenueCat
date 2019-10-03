@@ -27,7 +27,7 @@ void GodotRevenueCat::init(const int godotId, const String &api_key, const bool 
 }
 
 
-void GodotRevenueCat::purchase_product(const String &product_id){
+void GodotRevenueCat::purchase_product(const String &product_id, const String &revenue_cat_offering_id){
     NSString *ns_product_id = [NSString stringWithCString: product_id.utf8().get_data()];
     __block SKProduct *product;
     // Get available products
@@ -41,7 +41,7 @@ void GodotRevenueCat::purchase_product(const String &product_id){
             return;
         }
         // Get SKProduct
-        product = entitlements[@"subscription"].offerings[@"weekly"].activeProduct; //<--
+        product = entitlements[@"subscription"].offerings[[NSString stringWithCString: revenue_cat_offering_id.utf8().get_data()]].activeProduct;
         if (product == nil) {
             Object *obj = ObjectDB::get_instance(instanceId);
             obj->call_deferred(String("revenuecat_purchase_product_failed"), [ns_product_id UTF8String], @"Subscription provider is not available at the moment.");
