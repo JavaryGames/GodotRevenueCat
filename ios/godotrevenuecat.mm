@@ -115,7 +115,7 @@ Dictionary create_info_dict(RCEntitlementInfo *entitlement, NSString *product_id
     info["productIdentifier"] = [entitlement.productIdentifier UTF8String];
     info["willRenew"] = entitlement.willRenew ? true : false;
     info["isSandbox"] = entitlement.isSandbox ? true : false;
-    info["periodType"] = entitlement.periodType;
+    info["periodType"] = (int) entitlement.periodType;
     NSDate* lastTransactionDate = entitlement.latestPurchaseDate;
     info["latestPurchaseDate"] = String::utf8([[NSString stringWithFormat:@"%.0f", [lastTransactionDate timeIntervalSince1970]] UTF8String]);
     NSDate* originalTransactionDate = entitlement.originalPurchaseDate;
