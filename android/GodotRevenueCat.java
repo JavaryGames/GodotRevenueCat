@@ -156,7 +156,11 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             info.put("periodType", (int)entitlementInfo.getPeriodType().ordinal());
             info.put("latestPurchaseDate", entitlementInfo.getLatestPurchaseDate().getTime() + "");
             info.put("originalPurchaseDate", entitlementInfo.getOriginalPurchaseDate().getTime() + "");
-            info.put("expirationDate", entitlementInfo.getExpirationDate().getTime() + "");
+            if(entitlementInfo.getExpirationDate() != null){
+                info.put("expirationDate", entitlementInfo.getExpirationDate().getTime() + "");
+            }else{
+                info.put("expirationDate", "0");
+            }
         }else{
             info.put("isActive", false);
             info.put("productId", product_id);
@@ -165,9 +169,9 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             info.put("willRenew", null);
             info.put("isSandbox", null);
             info.put("periodType", null);
-            info.put("latestPurchaseDate", 0);
-            info.put("originalPurchaseDate", 0);
-            info.put("expirationDate", 0);
+            info.put("latestPurchaseDate", "0");
+            info.put("originalPurchaseDate", "0");
+            info.put("expirationDate", "0");
         }
 
         return info;
