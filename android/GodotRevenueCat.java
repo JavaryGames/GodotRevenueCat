@@ -69,6 +69,12 @@ public class GodotRevenueCat extends Godot.SingletonBase {
     }
 
     public void purchase_product(final String product_id, String revenue_cat_offering_id){
+        if (this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id) == null
+            || this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id).getSkuDetails() == null){
+            GodotLib.calldeferred(instanceId, "print_debug_message", new Object[]{this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id).toString()});
+            GodotLib.calldeferred(instanceId, "revenuecat_purchase_product_failed", new Object[]{product_id, "Invalid Product."});
+            return;
+        }
         Purchases.getSharedInstance().makePurchase(
             this.activity,
             this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id).getSkuDetails(),
