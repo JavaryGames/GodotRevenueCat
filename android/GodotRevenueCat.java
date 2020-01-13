@@ -80,8 +80,8 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             new MakePurchaseListener() {
                 @Override
                 public void onCompleted(@NonNull Purchase purchase, @NonNull PurchaserInfo purchaserInfo) {
-                    Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get(product_id), product_id);
-                    if (purchaserInfo.getEntitlements().get(product_id).isActive()) {
+                    Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get("subscription"), product_id);
+                    if (purchaserInfo.getEntitlements().get("subscription").isActive()) {
                     // Unlock that great "pro" content
                         if (instanceId != 0){
                             GodotLib.calldeferred(instanceId, "revenuecat_purchase_product_succeeded", new Object[]{product_id, info});
@@ -129,7 +129,7 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             @Override
             public void onReceived(@NonNull PurchaserInfo purchaserInfo) {
                 // access latest purchaserInfo
-                Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get(subscription_id), subscription_id);
+                Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get("subscription"), subscription_id);
                 if (instanceId != 0){
                     GodotLib.calldeferred(instanceId, "revenuecat_check_subscription_succeeded", new Object[]{info.get("isActive"), info});
                 }
