@@ -4,6 +4,7 @@ def can_build(env, platform):
 
 def configure(env):
     if (env['platform'] == 'android'):
+        return
         env.android_add_dependency("implementation 'com.revenuecat.purchases:purchases:3.0.3'")
         env.android_add_java_dir("android/src/")
     if env['platform'] == "iphone":
