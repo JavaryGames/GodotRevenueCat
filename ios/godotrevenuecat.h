@@ -21,7 +21,7 @@ public:
     void purchase_product(const String &product_id, const String &revenue_cat_offering_id);
     void restore_transactions();
     void check_subscription_status(const String &subscription_id);
-
+    void get_products(const String &entitlement, const String &offerings);
 
 
     GodotRevenueCat();

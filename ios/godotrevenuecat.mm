@@ -127,10 +127,28 @@ Dictionary create_info_dict(RCEntitlementInfo *entitlement, NSString *product_id
 }
 
 
+void GodotRevenueCat::get_products(const String &entitlement, const String &offerings){
+    [[RCPurchases sharedPurchases] entitlementsWithCompletionBlock:^(RCEntitlements *entitlements, NSError *error) {
+        // Get SKProduct
+        Dictionary products = Dictionary();
+        for(NSString* offer in [offerings componentsSeparatedByString:@","]){
+            if([entitlements[entitlement].offerings objectForKey:offer] == nil){
+                continue;
+            }
+            products["offer"] = entitlements[entitlement].offerings[offer].activeProduct;
+        }
+        
+        obj->call_deferred(String("revenuecat_get_products"), products);
+        return;
+        }
+    }
+}
+
+
 void GodotRevenueCat::_bind_methods() {
     ClassDB::bind_method("init", &GodotRevenueCat::init);
     ClassDB::bind_method("purchase_product", &GodotRevenueCat::purchase_product);
     ClassDB::bind_method("restore_transactions", &GodotRevenueCat::restore_transactions);
     ClassDB::bind_method("check_subscription_status", &GodotRevenueCat::check_subscription_status);
-
+    ClassDB::bind_method("get_products", &GodotRevenueCat::get_products);
 }

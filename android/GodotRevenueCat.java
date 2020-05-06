@@ -7,6 +7,7 @@ import android.util.Log;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -45,7 +46,8 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             "init",
             "purchase_product",
             "restore_transactions",
-            "check_subscription_status"
+            "check_subscription_status",
+            "get_products"
         });
 
         activity = p_activity;
@@ -69,8 +71,8 @@ public class GodotRevenueCat extends Godot.SingletonBase {
     }
 
     public void purchase_product(final String product_id, String revenue_cat_offering_id){
-        if (this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id) == null
-            || this.entitlements.get("subscription").getOfferings().get(revenue_cat_offering_id).getSkuDetails() == null){
+        if (this.entitlements.get(product_id).getOfferings().get(revenue_cat_offering_id) == null
+            || this.entitlements.get(product_id).getOfferings().get(revenue_cat_offering_id).getSkuDetails() == null){
             GodotLib.calldeferred(instanceId, "revenuecat_purchase_product_failed", new Object[]{product_id, "Invalid Product."});
             return;
         }
@@ -129,7 +131,7 @@ public class GodotRevenueCat extends Godot.SingletonBase {
             @Override
             public void onReceived(@NonNull PurchaserInfo purchaserInfo) {
                 // access latest purchaserInfo
-                Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get("subscription"), subscription_id);
+                Dictionary info = create_info_dict(purchaserInfo.getEntitlements().get(subscription_id), subscription_id);
                 if (instanceId != 0){
                     GodotLib.calldeferred(instanceId, "revenuecat_check_subscription_succeeded", new Object[]{info.get("isActive"), info});
                 }
@@ -177,6 +179,26 @@ public class GodotRevenueCat extends Godot.SingletonBase {
         return info;
     }
 
+    public void get_products(final String entitlement, final String offerings){
+        Purchases.getSharedInstance().getEntitlements(new ReceiveEntitlementsListener() {
+            @Override
+            public void onReceived(@Nullable Map<String, Entitlement> entitlements) {
+                Dictionary products = new Dictionary();
+                for(String offer : offerings.split(",")){
+                    if (entitlements.get(entitlement).getOfferings().get(offer) == null
+                        || entitlements.get(entitlement).getOfferings().get(offer).getSkuDetails() == null){
+                        continue;
+                    }
+                    products.put(offer, entitlements.get(entitlement).getOfferings().get(offer).getSkuDetails().getSku());
+                }
+                GodotLib.calldeferred(instanceId, "revenuecat_get_products", new Object[]{products});
+            }
+        
+            @Override
+            public void onError(@NonNull PurchasesError error) {}
+        });
+    }
+    
     public void setEntitlements(Map<String, Entitlement> entitlements){
         this.entitlements = entitlements;
     }
