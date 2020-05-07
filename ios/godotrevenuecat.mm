@@ -127,21 +127,28 @@ Dictionary create_info_dict(RCEntitlementInfo *entitlement, NSString *product_id
 }
 
 
-void GodotRevenueCat::get_products(const String &entitlement, const String &offerings){
+void GodotRevenueCat::get_products(const String &entitlement, const String &offerings) {
+    NSLog(@"FORA GABRIEL String oferrings %s", offerings.utf8().get_data());
+    NSString *my_offerings = [NSString stringWithCString: offerings.utf8().get_data()];
+    NSString *my_entitlement = [NSString stringWithCString: entitlement.utf8().get_data()];
     [[RCPurchases sharedPurchases] entitlementsWithCompletionBlock:^(RCEntitlements *entitlements, NSError *error) {
         // Get SKProduct
         Dictionary products = Dictionary();
-        for(NSString* offer in [offerings componentsSeparatedByString:@","]){
-            if([entitlements[entitlement].offerings objectForKey:offer] == nil){
+        NSLog(@"GABRIEL String oferrings %s", offerings.utf8().get_data());
+        NSLog(@"GABRIEL String  my_offerings %@", my_offerings);
+        for(NSString* offer in [my_offerings componentsSeparatedByString:@","]){
+            NSLog(@"BORA GABRIEL ANTES DO IF %@", offer);
+            if(entitlements[my_entitlement].offerings[offer] == nil){
                 continue;
             }
-            products["offer"] = entitlements[entitlement].offerings[offer].activeProduct;
+            NSLog(@"BORA GABRIEL DEPOIS DO IF %@", offer);
+            products[offer] = String::utf8([entitlements[my_entitlement].offerings[offer].activeProduct.productIdentifier UTF8String]);
+            NSLog(@"Gabriel valor da parada: %@", entitlements[my_entitlement].offerings[offer].activeProduct.productIdentifier);
         }
-        
+        Object *obj = ObjectDB::get_instance(instanceId);
         obj->call_deferred(String("revenuecat_get_products"), products);
         return;
-        }
-    }
+    }];
 }
 
 
