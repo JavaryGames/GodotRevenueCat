@@ -137,7 +137,8 @@ void GodotRevenueCat::get_products(const String &entitlement, const String &offe
             if(entitlements[my_entitlement].offerings[offer] == nil){
                 continue;
             }
-            products[offer] = String::utf8([entitlements[my_entitlement].offerings[offer].activeProduct.productIdentifier UTF8String]);
+            const char *product_key = [offer cStringUsingEncoding:[NSString defaultCStringEncoding]];
+            products[product_key] = String::utf8([entitlements[my_entitlement].offerings[offer].activeProduct.productIdentifier UTF8String]);
         }
         Object *obj = ObjectDB::get_instance(instanceId);
         obj->call_deferred(String("revenuecat_get_products"), products);
